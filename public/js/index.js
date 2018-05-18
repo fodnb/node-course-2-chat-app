@@ -1,11 +1,8 @@
+
 var socket = io();
 
 socket.on('connect', function(){
 	console.log('connected to server');
-	socket.emit('createMessage', {
-		from: 'Dan',
-		text: 'index.js - text new message'
-	});
 });
 
 socket.on('disconnect', function(){
@@ -14,5 +11,31 @@ socket.on('disconnect', function(){
 
 
 socket.on('newMessage', function(message){
+	var li = $('<li></li>');
+
+	li.text(`${message.from}: ${message.text}`);
+
+	$("#messages").append(li);
+
+
 	console.log('new message', message);
-})
+});
+
+
+		
+$("#message-form").on('submit', function(e){
+	e.preventDefault();
+	var myInput = $('[name=message]').val();
+
+		socket.emit('createMessage', {
+		from: "user",
+		text: myInput
+	}, function(){
+
+// need to add callback function
+});
+
+$("#message").val("");
+
+
+});
