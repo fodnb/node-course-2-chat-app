@@ -46,16 +46,22 @@ app.use(express.static(publicPath));
 	});
 
 	socket.on('createMessage', (message, callback)=>{
-		console.log('create message', message);
-		io.emit('newMessage', generateMessage(message.from, message.text));	
-		callback('this is from the server');	
+		var user = users.getUser(socket.id);
+
+		if(user && isRealString(message.text)){
+			io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));		
+		}
+
+		callback();	
 	});
 
 
 	socket.on('createLocationMessage', (coords)=>{
+		var user = users.getUser(socket.id);
 
-		io.emit('newLocationMessage', generateLocationMessage('Admin', coords.lat, coords.lon));
-
+		if(user){
+			io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.lat, coords.lon));
+		}
 	});
 
 
